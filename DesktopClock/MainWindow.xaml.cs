@@ -69,6 +69,11 @@ namespace DesktopClock
             else
                 autoButton.IsChecked = true;
         }
+
+        private void Window_Deactivated(object sender, EventArgs e)
+        {
+            Topmost = true;
+        }
     }
 
     public class Clock : INotifyPropertyChanged

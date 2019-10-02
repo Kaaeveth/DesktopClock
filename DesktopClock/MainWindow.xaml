@@ -9,6 +9,8 @@
         mc:Ignorable="d"
         Height="178" Width="175"
         WindowStyle="None"
+        Topmost="True"
+        Deactivated="Window_Deactivated"
         ShowInTaskbar="False"
         ResizeMode="NoResize"
         AllowsTransparency="False"
