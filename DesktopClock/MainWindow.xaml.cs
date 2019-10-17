@@ -15,6 +15,15 @@ namespace DesktopClock
     {
         private Properties.Settings _Settings = Properties.Settings.Default;
         private RegistryKey regKey = Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Run", true);
+        private bool pTopmost
+        {
+            get { return pTopmost; } 
+            set
+            {
+                Topmost = value;
+                pTopmost = value;
+            }
+        }
 
         public MainWindow()
         {
@@ -22,9 +31,19 @@ namespace DesktopClock
             WindowStartup();
             AutoRun();
 
+            topmostButton.Checked += (object sender, RoutedEventArgs e) =>
+            {
+                pTopmost = true;
+            };
+
+            topmostButton.Unchecked += (object sender, RoutedEventArgs e) =>
+            {
+                pTopmost = false;
+            };
+
             DataContext = new Clock(DateDisplay);
         }
-
+        
         private void ColorZone_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (e.ChangedButton == MouseButton.Left)
@@ -72,7 +91,7 @@ namespace DesktopClock
 
         private void Window_Deactivated(object sender, EventArgs e)
         {
-            Topmost = true;
+            Topmost = pTopmost;
         }
     }
 

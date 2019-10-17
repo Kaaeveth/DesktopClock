@@ -28,6 +28,7 @@
             <Grid Height="30">
                 <TextBlock HorizontalAlignment="Left" Margin="2,2,0,0"> Autostart</TextBlock>
                 <ToggleButton x:Name="autoButton" Height="13" HorizontalAlignment="Left" Margin="0,13,0,0" Checked="ToggleButton_Checked" Unchecked="ToggleButton_Unchecked"></ToggleButton>
+                <ToggleButton x:Name="topmostButton" Height="13" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,2"></ToggleButton>
                 <Button Width="17" Height="17" HorizontalAlignment="Right" Margin="5" Style="{DynamicResource MaterialDesignFloatingActionAccentButton}" Click="Button_Click">
                     <Viewbox Width="17" Height="17">
                         <Canvas Width="26" Height="26">
