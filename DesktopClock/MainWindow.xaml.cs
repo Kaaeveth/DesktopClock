@@ -5,6 +5,8 @@ using System.Windows.Input;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using MaterialDesignThemes.Wpf;
+using System.Windows.Interop;
+using System.Runtime.InteropServices;
 
 namespace DesktopClock
 {
@@ -15,15 +17,7 @@ namespace DesktopClock
     {
         private Properties.Settings _Settings = Properties.Settings.Default;
         private RegistryKey regKey = Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Run", true);
-        private bool pTopmost
-        {
-            get { return pTopmost; } 
-            set
-            {
-                Topmost = value;
-                pTopmost = value;
-            }
-        }
+        private bool pTopmost = false;
 
         public MainWindow()
         {
@@ -31,19 +25,25 @@ namespace DesktopClock
             WindowStartup();
             AutoRun();
 
-            topmostButton.Checked += (object sender, RoutedEventArgs e) =>
-            {
-                pTopmost = true;
-            };
-
-            topmostButton.Unchecked += (object sender, RoutedEventArgs e) =>
-            {
-                pTopmost = false;
-            };
-
             DataContext = new Clock(DateDisplay);
         }
-        
+
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern uint GetWindowLong(IntPtr hWnd, int nIndex);
+
+        [DllImport("user32.dll")]
+        static extern int SetWindowLong(IntPtr hWnd, int nIndex, uint dwNewLong);
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            WindowInteropHelper wndHelper = new WindowInteropHelper(this);
+
+            int exStyle = (int)GetWindowLong(wndHelper.Handle, -20);
+
+            exStyle |= 0x00000080;
+            SetWindowLong(wndHelper.Handle, -20, (uint)exStyle);
+        }
+
         private void ColorZone_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (e.ChangedButton == MouseButton.Left)
@@ -79,6 +79,24 @@ namespace DesktopClock
                 Top = _Settings.Y;
                 Left = _Settings.X;
             }
+
+            pTopmost = _Settings.topmost;
+
+            topmostButton.Checked += (object sender, RoutedEventArgs e) =>
+            {
+                pTopmost = true;
+                _Settings.topmost = true;
+                _Settings.Save();
+            };
+
+            topmostButton.Unchecked += (object sender, RoutedEventArgs e) =>
+            {
+                pTopmost = false;
+                _Settings.topmost = false;
+                _Settings.Save();
+            };
+
+            topmostButton.IsChecked = pTopmost;
         }
 
         private void AutoRun()
